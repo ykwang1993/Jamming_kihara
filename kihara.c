@@ -60,7 +60,10 @@ void point_rod_dist(real *p, rod *r, real *info){
 
 }
 
-void rod_dist(rod *r1, rod *r2){
+/*
+rod_dist_return [min_dist, r1_x, r1_y, r2_x, r2_y]
+*/
+void rod_dist(rod *r1, rod *r2, real* rod_dist_return){
 	
 	//intersect checking
 	
@@ -83,14 +86,36 @@ void rod_dist(rod *r1, rod *r2){
 				swap(idx[j], idx[j-1]);
 				swap(min_dist[j], min_dist[j-1]);
 			}
-				
-
-            
-
-        
-
-    
 	
+	rod_dist_return[0]=min_dist[idx[0]];
+	
+	switch(idx[0]){
+		case 0:
+			rod_dist_return[1]=r1->x_1[0];
+			rod_dist_return[2]=r1->x_1[1];
+			rod_dist_return[3]=dist[idx[0]][1];
+			rod_dist_return[4]=dist[idx[0]][2];
+			break;
+		case 1:
+			rod_dist_return[1]=r1->x_2[0];
+			rod_dist_return[2]=r1->x_2[1];
+			rod_dist_return[3]=dist[idx[0]][1];
+			rod_dist_return[4]=dist[idx[0]][2];
+			break;
+		case 2:
+			rod_dist_return[1]=dist[idx[0]][1];
+			rod_dist_return[2]=dist[idx[0]][2];
+			rod_dist_return[3]=r2->x_1[0];
+			rod_dist_return[4]=r2->x_1[1];
+			break;
+		case 3:
+			rod_dist_return[1]=dist[idx[0]][1];
+			rod_dist_return[2]=dist[idx[0]][2];
+			rod_dist_return[3]=r2->x_2[0];
+			rod_dist_return[4]=r2->x_2[1];
+			break;
+	}	
+    
 	for(int i=0;i<4;i++)
 		printf("%f %f %f\n",dist[i][0],dist[i][1],dist[i][2]);
 	for(int i=0;i<4;i++)
@@ -111,7 +136,12 @@ int main(){
 	r2.x_2[0] = 2.;
 	r2.x_2[1] = 3.;
 	
-	rod_dist(&r1,&r2);
+	real rod_dist_return[5];
+	rod_dist(&r1,&r2,rod_dist_return);
+	
+	printf("\n");
+	for(int i=0;i<5;i++)
+		printf("%f ",rod_dist_return[i]);
 	
 	
 	//real x1[] = {2.,2.};
