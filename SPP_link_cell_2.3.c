@@ -477,6 +477,10 @@ void moveRods_LC(Cell *grid, int *nc, int *nc_moving, real *l) {
 
 void updateX(Rod *R, real delta_t) {
 
+	real 
+	real x_project[DIM];
+	
+	
 	for (int d=0; d<DIM; d++) {		
 		R->x[d] += DT*R->F[d];	 
 	}
