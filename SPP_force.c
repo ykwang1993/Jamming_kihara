@@ -26,15 +26,15 @@ void force_WCA(Rod *i, Rod *j, real *rod_dist_return, real *arm, real r, real *l
 	real F_wca[DIM];
 	
     for (int d=0; d<DIM; d++)		
-		F_wca[d] = f * rzta * makePBC(rod_dist_return[3+d],rod_dist_return[1+d],l[d]); //rod_dist_return[3] and [4] is the pst of x2
+		F_wca[d] = f * makePBC(rod_dist_return[3+d],rod_dist_return[1+d],l[d]); //rod_dist_return[3] and [4] is the pst of x2
 
 	
 	real F_project[DIM];
-	real rzta_project[2] = {}
-	vector_project(F_wca, i->angle, F_project)
+	real rzta_project[2] = {} ;
+	vector_project(F_wca, i->angle, F_project);
 	
 	for (int d=0; d<DIM; d++)
-		i->F[d] += F_project[d];
+		i->F[d] += rzta_project[d]*F_project[d];
 	
 	i->T += cross(arm,F_wca);
 	if(cross(arm,F_wca) > 1000.){
