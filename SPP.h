@@ -102,7 +102,7 @@ void compX_LC(Cell *grid, int *nc, int *nc_moving, real *l, real delta_t);
 //void compV_LC(Cell *grid, int *nc, int *nc_moving, real *l, real delta_t);
 //void moving_boundary(Cell* grid, int *nc, int *nc_moving, real* l, real dx, real r_cut);
 void timeIntegration_LC(real t, real delta_t, real t_end, Cell* grid, int *nc, real* l, real r_cut, int N, Rod **order);
-
+void vector_project(real *input, real angle, real *output);
 
 
 

@@ -16,10 +16,11 @@ void vector_project(real *input, real angle, real *output){
 int main(){
 	
 	real output[2];
-	real input[2] = {1,1};
+	real input[2] = {-1,1};
 	
-	vector_project(input,180.,output);
+	vector_project(input,45.,output);
 	printf("%f %f\n",output[0], output[1]);
+
 
 	return 0;
 }

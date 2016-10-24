@@ -30,25 +30,26 @@ void force_WCA(Rod *i, Rod *j, real *rod_dist_return, real *arm, real r, real *l
 
 	
 	real F_project[DIM];
-	real rzta_project[2] = {} ;
+	real rzta_project[2] = {0.188/KT,0.154/KT} ;
 	vector_project(F_wca, i->angle, F_project);
 	
 	for (int d=0; d<DIM; d++)
 		i->F[d] += rzta_project[d]*F_project[d];
 	
-	i->T += cross(arm,F_wca);
-	if(cross(arm,F_wca) > 1000.){
+	i->T += cross(arm,F_wca) * 0.111/KT;
+	
+ 	if(sqrt(r)<0.5){
 		printf("crash\n");
 		printf("wca=(%f,%f)\n",F_wca[0],F_wca[1]);
 		printf("Torque=%f\n",cross(arm,F_wca));
-		printf("r=%f\n",r);
+		printf("r=%f\n",sqrt(r));
 		
 		printf("i->x_1=(%f,%f)\n",i->x_1[0],i->x_1[1]);
 		printf("i->x_2=(%f,%f)\n",i->x_2[0],i->x_2[1]);
 		
 		printf("j->x_1=(%f,%f)\n",j->x_1[0],j->x_1[1]);
 		printf("j->x_2=(%f,%f)\n",j->x_2[0],j->x_2[1]);
-	}
+	} 
 	
 }
 
@@ -167,6 +168,14 @@ void rod_dist(Rod *r1, Rod *r2, real* rod_dist_return){
 	}	
 }
 
+
+/*
+argument angle is the angle between rod and positive x axis.
+if the input vector is (1,1), and angle is pi/4,
+then the output vector is (1.414, 0)
+
+that is, output = (project on long axis, project on short axis)
+*/
 void vector_project(real *input, real angle, real *output){
 	
 	output[0]=input[0]*cos(angle)+input[1]*sin(angle);

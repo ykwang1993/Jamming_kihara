@@ -76,7 +76,7 @@ void inputParameters_LC(real *delta_t, real *t_end, int *N, int *nc, real *l, re
 
     l[0] = 120.;
     l[1] = 120.;
-    *delta_t = 5e-5;
+    *delta_t = 5e-5; //5e-5
     *r_cut = 2.5+2*2;
     *t_end = 10.;
 
@@ -234,15 +234,20 @@ void compF_Intr(Rod **order, int N, real *l, long *seed, real thrust){
     for (int i=1;i<=N;i++){
      
         //Gaussian
-        real ranForce;
-        real dc=KT*rzta;
+        real ranForce_project;
+		real rzta_project[2] = {0.188/KT,0.154/KT} ;
+        real dc_project[3]={0.188,0.154,0.111};
         real invDT=1./DT;
-
+		
+		
 
         for (int d=0; d<DIM; d++){
-            ranForce=sqrt(2.*dc*invDT)*gasdev(seed);  //about 140
-            order[i-1]->F[d] += ranForce;
+            ranForce_project=sqrt(2.*dc_project[d]*invDT)*gasdev(seed);  //about 140
+            order[i-1]->F[d] += ranForce_project;
         }
+		
+		order[i-1]->T += sqrt(2.*dc_project[3]*invDT)*gasdev(seed)*0.01;
+		
         //if (i == N) printf("%e\n",ranForce);
 
         //Thrusting force
@@ -253,10 +258,10 @@ void compF_Intr(Rod **order, int N, real *l, long *seed, real thrust){
         order[i-1]->F[0] += rzta*thrust*cos(thrustAng);
         order[i-1]->F[1] += rzta*thrust*sin(thrustAng);  */
 		
-		order[i-1]->F[0] += rzta*thrust*cos(order[i-1]->angle);
-		order[i-1]->F[1] += rzta*thrust*sin(order[i-1]->angle);
+		order[i-1]->F[0] += rzta_project[0]*thrust;
+
 		
-		order[i-1]->angle += gasdev(seed)*0.000001;
+		
 
 
     }
@@ -477,14 +482,16 @@ void moveRods_LC(Cell *grid, int *nc, int *nc_moving, real *l) {
 
 void updateX(Rod *R, real delta_t) {
 
-	real 
-	real x_project[DIM];
+ 
+	real F_xy[DIM];
 	
-	
+	vector_project(R->F, -(R->angle), F_xy);
+		
 	for (int d=0; d<DIM; d++) {		
-		R->x[d] += DT*R->F[d];	 
+		R->x[d] += DT * F_xy[d];	 
 	}
-	R->angle += DT*R->T;
+	
+	R->angle += DT * R->T;
 	R->x_1[0] = R->x[0]+R->hl*cos(R->angle);
 	R->x_1[1] =	R->x[1]+R->hl*sin(R->angle);
 	R->x_2[0] = R->x[0]-R->hl*cos(R->angle);
@@ -588,7 +595,7 @@ void timeIntegration_LC(real t, real delta_t, real t_end, Cell* grid, int *nc, r
     char path[12];
 	int PBC_state=0; 
 	real dx=0.0001;
-	real thrust=0.01;
+	real thrust=0.8;
 	int nc_moving[DIM];
 	for(int d=0;d<DIM;d++)
 		nc_moving[d]=nc[d];
